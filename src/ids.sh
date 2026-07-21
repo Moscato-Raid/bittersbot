@@ -1,2 +1,2 @@
-export MOSBOT_TOKEN="token"
-export MOSBOT_GUILD_ID="guild_id"
+export BITTERSTBOT_TOKEN="token"
+export BITTERSTBOT_GUILD_ID="guild_id"
