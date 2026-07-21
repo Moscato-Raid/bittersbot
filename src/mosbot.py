@@ -1,4 +1,4 @@
-from typing import Optional
+=from typing import Optional
 import os
 import re
 
@@ -9,7 +9,7 @@ import sqlite3
 guild_id = os.environ.get('MOSBOT_GUILD_ID')
 MY_GUILD = discord.Object(id=guild_id)  # replace with your guild id
 brann_idiotbeard = 1343634021799694417
-ignored_ids = [473513656265736233, #Moscato
+ignored_ids = [89558435930071040, #Bitterst
                brann_idiotbeard #Brann
               ]
 
@@ -80,14 +80,14 @@ async def getUsers(interaction: discord.Interaction, rawMessage: str):
 
 @client.tree.command()
 @app_commands.describe(
-    members='The user(s) to give $mos to. Ie: @Ken @Mosc',
-    dollars='The numbers of $mos to give',
+    members='The user(s) to give $bits to. Ie: @Boozleblom @bitterst',
+    dollars='The numbers of $bits to give',
 )
-async def mosgive(interaction: discord.Interaction, members: str, dollars: int, memo: str):
+async def bitsgive(interaction: discord.Interaction, members: str, dollars: int, memo: str):
     caller = interaction.user
-    if not any(role.name == "mos" for role in caller.roles):
+    if not any(role.name == "BittersBucks" for role in caller.roles):
         caller_name = str(caller.display_name)
-        await interaction.response.send_message(f'{caller_name} does not have $mos ledger write permissions.')
+        await interaction.response.send_message(f'{caller_name} does not have $bits ledger write permissions.')
         return
 
     unique_members = await getUsers(interaction, members)
@@ -102,7 +102,7 @@ async def mosgive(interaction: discord.Interaction, members: str, dollars: int, 
         if dollars < 0:
             dollars = dollars * -1
 
-        con = sqlite3.connect("mosbot.db")
+        con = sqlite3.connect("bitterstbot.db")
         cur = con.cursor()
         res = cur.execute("SELECT * FROM bank WHERE id=?", (member_id,))
 
@@ -116,23 +116,23 @@ async def mosgive(interaction: discord.Interaction, members: str, dollars: int, 
             con.commit()
             con.close()
 
-            responseMessages.append(f'{member_name} now has {update_dollars} $mos.')
+            responseMessages.append(f'{member_name} now has {update_dollars} $bits.')
 
         else:
             cur.execute("INSERT INTO bank VALUES(?,?)", (member_id, dollars,))
             con.commit()
             con.close()
 
-            responseMessages.append(f'{member_name} now has {dollars} $mos.')
+            responseMessages.append(f'{member_name} now has {dollars} $bits.')
 
     await interaction.response.send_message("\n".join(responseMessages))
 
 
 @client.tree.command()
 @app_commands.describe(
-    dollars='The numbers of $mos to steal',
+    dollars='The numbers of $bits to steal',
 )
-async def mossteal(interaction: discord.Interaction, dollars: int, memo: str):
+async def bitssteal(interaction: discord.Interaction, dollars: int, memo: str):
     valid_id = False
     caller = interaction.user
     caller_name = str(caller.display_name)
@@ -140,17 +140,17 @@ async def mossteal(interaction: discord.Interaction, dollars: int, memo: str):
 
     # There is currently one valid criminal interaction
     #   until a table of relationships or something is made, this is hardcoded
-    sovoke_id = 134554502140395520
-    thonir_id = 348883795266764800
+    celexxia_id = 227856369464639488
+    bitterst_id = 89558435930071040
 
     dollars = abs(dollars)
 
-    if caller.id == sovoke_id:
+    if caller.id == celexxia_id:
         valid_id = True
 
     if valid_id == True:
 
-        con = sqlite3.connect("mosbot.db")
+        con = sqlite3.connect("bitterstbot.db")
         cur = con.cursor()
         update_source = 0
         update_target = 0
@@ -167,23 +167,23 @@ async def mossteal(interaction: discord.Interaction, dollars: int, memo: str):
 
             # This should not run if either of the above cursors failed
         if (update_source != 0) and (update_target != 0):
-            cur.execute("UPDATE bank SET balance=? WHERE id=?", (update_source, thonir_id,))
-            cur.execute("UPDATE bank SET balance=? WHERE id=?", (update_target, sovoke_id,))
+            cur.execute("UPDATE bank SET balance=? WHERE id=?", (update_source, bitterst_id,))
+            cur.execute("UPDATE bank SET balance=? WHERE id=?", (update_target, celexxia_id,))
             con.commit()
             con.close()
 
-            await interaction.response.send_message(f'Sovoke has stolen {dollars} $mos from Thonir, and now has {update_target} $mos. \n Thonir now has {update_source} $mos. Memo: {memo}')
+            await interaction.response.send_message(f'Celexxia has stolen {dollars} $bits from Bitters, and now has {update_target} $bits. \n Bitterst now has {update_source} $bits. Memo: {memo}')
     else:
-        await interaction.response.send_message(f'{caller_name} does not have $mos ledger write permissions.')
+        await interaction.response.send_message(f'{caller_name} does not have $bits ledger write permissions.')
 
 
 
 @client.tree.command()
 @app_commands.describe(
-    member='The user to take $mos from',
-    dollars='The numbers of $mos to take',
+    member='The user to take $bits from',
+    dollars='The numbers of $bits to take',
 )
-async def mostake(interaction: discord.Interaction, member: discord.Member, dollars: int, memo: str):
+async def bitstake(interaction: discord.Interaction, member: discord.Member, dollars: int, memo: str):
     valid_role = False
     caller = interaction.user
     caller_name = str(caller.display_name)
@@ -195,15 +195,12 @@ async def mostake(interaction: discord.Interaction, member: discord.Member, doll
         dollars = dollars * -1
 
     for role in caller.roles:
-        if role.name == "mos":
+        if role.name == "BittersBucks":
             valid_role = True
-
-    if member_id == brann_idiotbeard:
-        valid_role = True
 
     if valid_role == True:
 
-        con = sqlite3.connect("mosbot.db")
+        con = sqlite3.connect("bitterstbot.db")
         cur = con.cursor()
         res = cur.execute("SELECT * FROM bank WHERE id=?", (member_id,))
 
@@ -217,7 +214,7 @@ async def mostake(interaction: discord.Interaction, member: discord.Member, doll
             con.commit()
             con.close()
 
-            await interaction.response.send_message(f'{member_name} has lost {dollars} $mos, and now has {update_dollars} $mos. Memo: {memo}')
+            await interaction.response.send_message(f'{member_name} has lost {dollars} $bits, and now has {update_dollars} $bits. Memo: {memo}')
 
         else:
             init_dollars = 0 - dollars
@@ -225,21 +222,21 @@ async def mostake(interaction: discord.Interaction, member: discord.Member, doll
             con.commit()
             con.close()
 
-            await interaction.response.send_message(f'{member_name} has lost {dollars} $mos, and now has {init_dollars} $mos. Memo: {memo}')
+            await interaction.response.send_message(f'{member_name} has lost {dollars} $bits, and now has {init_dollars} $bits. Memo: {memo}')
 
     else:
-        await interaction.response.send_message(f'{caller_name} does not have $mos ledger write permissions.')
+        await interaction.response.send_message(f'{caller_name} does not have $bits ledger write permissions.')
 
 @client.tree.command()
 @app_commands.describe(
-    member='The user to check $mos balance'
+    member='The user to check $bits balance'
 )
-async def moscheck(interaction: discord.Interaction, member: discord.Member):
-    """Checks a user's current $mos balance"""
+async def bitscheck(interaction: discord.Interaction, member: discord.Member):
+    """Checks a user's current $bits balance"""
     member_name = str(member.display_name)
     member_id = member.id
 
-    con = sqlite3.connect("mosbot.db")
+    con = sqlite3.connect("bitterstbot.db")
     cur = con.cursor()
     res = cur.execute("SELECT * FROM bank WHERE id=?", (member_id,))
 
@@ -248,19 +245,19 @@ async def moscheck(interaction: discord.Interaction, member: discord.Member):
         data = res.fetchone()
         con.close()
 
-        await interaction.response.send_message(f'{member_name} has {data[1]} $mos')
+        await interaction.response.send_message(f'{member_name} has {data[1]} $bits')
 
     else:
         con.close()
 
-        await interaction.response.send_message(f'{member_name} has 0 $mos')
+        await interaction.response.send_message(f'{member_name} has 0 $bits')
 
 @client.tree.command()
 @app_commands.describe(
 )
-async def mosrank(interaction: discord.Interaction):
-    """Displays current top 10 $mos rankings"""
-    con = sqlite3.connect("mosbot.db")
+async def bitsrank(interaction: discord.Interaction):
+    """Displays current top 10 $bits rankings"""
+    con = sqlite3.connect("bitterstbot.db")
     cur = con.cursor()
 
     #Get only top 10 values
@@ -283,18 +280,18 @@ async def mosrank(interaction: discord.Interaction):
     member_dict = dict(map(lambda key: (key.id,key.display_name),members_by_id))
 
 
-    rank_str = f"Top 10 $mos balance\n"
+    rank_str = f"Top 10 $bits balance\n"
     for num,id,amnt in zip(range(1,11),user_id,user_rank):
-        rank_str += f"{num}. {member_dict[id]}: {amnt} $mos \n"
+        rank_str += f"{num}. {member_dict[id]}: {amnt} $bits \n"
 
     await interaction.response.send_message(rank_str)
 
 @client.tree.command()
 @app_commands.describe(
 )
-async def mosdebt(interaction: discord.Interaction):
-    """Displays current bottom 10 $mos rankings"""
-    con = sqlite3.connect("mosbot.db")
+async def bitsdebt(interaction: discord.Interaction):
+    """Displays current bottom 10 $bits rankings"""
+    con = sqlite3.connect("bitterstbot.db")
     cur = con.cursor()
 
 
@@ -320,9 +317,9 @@ async def mosdebt(interaction: discord.Interaction):
     member_dict = dict(map(lambda key: (key.id,key.display_name),members_by_id))
 
 
-    rank_str = f"Bottom 10 $mos balance\n"
+    rank_str = f"Bottom 10 $bits balance\n"
     for num,id,amnt in zip(range(1,11),user_id,user_rank):
-        rank_str += f"{num}. {member_dict[id]}: {amnt} $mos \n"
+        rank_str += f"{num}. {member_dict[id]}: {amnt} $bits \n"
 
     await interaction.response.send_message(rank_str)
 
