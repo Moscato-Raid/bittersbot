@@ -1,2 +1,2 @@
-# mosbot
-Moscato Dollar Bot
+# bitsbot
+Bitterst Buck Bot
