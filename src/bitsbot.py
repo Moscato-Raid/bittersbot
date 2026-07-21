@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 import sqlite3
 
-guild_id = os.environ.get('MOSBOT_GUILD_ID')
+guild_id = os.environ.get('BITTERSTBOT_GUILD_ID')
 MY_GUILD = discord.Object(id=guild_id)  # replace with your guild id
 brann_idiotbeard = 1343634021799694417
 ignored_ids = [89558435930071040, #Bitterst
@@ -40,7 +40,7 @@ intents = discord.Intents.default()
 intents.members = True
 client = MyClient(intents=intents)
 
-con = sqlite3.connect("mosbot.db")
+con = sqlite3.connect("bitterstbot.db")
 
 cur = con.cursor()
 
@@ -325,4 +325,4 @@ async def bitsdebt(interaction: discord.Interaction):
 
 
 
-client.run(os.environ.get('MOSBOT_TOKEN'))
+client.run(os.environ.get('BITTERSTBOT_TOKEN'))
